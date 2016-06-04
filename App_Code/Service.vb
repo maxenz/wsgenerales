@@ -445,7 +445,7 @@ Public Class Service
         Dim conexionServidor As String
         Dim fechaDeVencimiento As DateTime
         serialNumber = serialNumber.Replace("/", "")
-        connectionString = "Data Source=LOG\SQLEXPRESS;Initial Catalog=Gestion;Integrated Security=SSPI;User Id = dbaadmin; Password = yeike;"
+        connectionString = "Data Source=LOG,9898\SQLEXPRESS;Initial Catalog=Gestion;Integrated Security=SSPI;User Id = dbaadmin; Password = yeike;"
 
         Try
 
