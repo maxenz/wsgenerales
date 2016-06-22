@@ -9,7 +9,7 @@ Imports RestSharp
 Imports System.Net
 Imports System.IO
 Imports Newtonsoft.Json.Linq
-
+Imports System.Web.Configuration
 
 
 ' Para permitir que se llame a este servicio Web desde un script, usando ASP.NET AJAX, quite la marca de comentario de la siguiente línea.
@@ -583,36 +583,37 @@ Public Class Service
     End Function
 
     <WebMethod()> _
-    Public Function setPushNotification(licencia As String, nroMovil As String, mensaje As String, appID As String, restApiKey As String) As Boolean
-        'application id example Yu5MsVhQi7ih2ltKlNrQcrpFfvRlexZnGiecJZHd
-        'rest api key example KRAjomjaryxsslXvwnuwHkZk7CRJpSwpGFkfY0aP
+    Public Function setPushNotification(license As String, mobile As String, message As String) As Boolean
 
-        Dim channel As String = Convert.ToString("m") & nroMovil & "_" & licencia
+        Dim oneSignalUrl As String = WebConfigurationManager.AppSettings.Get("oneSignalUrl")
 
-        Dim isPushMessageSend As Boolean = False
+        Dim request = TryCast(WebRequest.Create(oneSignalUrl), HttpWebRequest)
 
-        Dim postString As String = ""
-        Dim urlpath As String = "https://api.parse.com/1/push"
-        Dim httpWebRequest = DirectCast(WebRequest.Create(urlpath), HttpWebRequest)
-        postString = (Convert.ToString((Convert.ToString("{ ""channels"": [ """) & channel) + """  ], " + """data"" : {""alert"":""") & mensaje) + """}" + "}"
-        httpWebRequest.ContentType = "application/json"
-        httpWebRequest.ContentLength = postString.Length
-        httpWebRequest.Headers.Add("X-Parse-Application-Id", appID)
-        httpWebRequest.Headers.Add("X-Parse-REST-API-KEY", restApiKey)
-        httpWebRequest.Method = "POST"
-        Dim requestWriter As New StreamWriter(httpWebRequest.GetRequestStream())
-        requestWriter.Write(postString)
-        requestWriter.Close()
-        Dim httpResponse = DirectCast(httpWebRequest.GetResponse(), HttpWebResponse)
-        Using streamReader = New StreamReader(httpResponse.GetResponseStream())
-            Dim responseText = streamReader.ReadToEnd()
-            Dim jObjRes As JObject = JObject.Parse(responseText)
-            If Convert.ToString(jObjRes).IndexOf("true") <> -1 Then
-                isPushMessageSend = True
-            End If
-        End Using
+        request.KeepAlive = True
+        request.Method = "POST"
+        request.ContentType = "application/json"
 
-        Return isPushMessageSend
+        request.Headers.Add("authorization", "Basic ZjljMmY0OTMtMTk4Zi00NWE4LWI2ODItMDllMWNmMjUxNWU5")
+
+        Dim byteArray As Byte() = Encoding.UTF8.GetBytes((Convert.ToString((Convert.ToString((Convert.ToString("{" + """app_id"": ""e090d46b-2aa9-403c-8365-401dfffb77fc""," + """contents"": {""en"": """) & message) + """, ""es"": """) & message) + """}," + """tags"" : [{ ""key"": ""mobile"", ""relation"": ""="", ""value"": """ + mobile + """}," + "{""operator"": ""AND""}," + "{""key"": ""license"", ""relation"": ""="", ""value"": """) & license) + """}" + "]}")
+
+        Dim responseContent As String = Nothing
+
+        Try
+            Using writer = request.GetRequestStream()
+                writer.Write(byteArray, 0, byteArray.Length)
+            End Using
+
+            Using response = TryCast(request.GetResponse(), HttpWebResponse)
+                Using reader = New StreamReader(response.GetResponseStream())
+                    responseContent = reader.ReadToEnd()
+                End Using
+            End Using
+            Return True
+        Catch ex As WebException
+            Return False
+        End Try
+
     End Function
 
 End Class
