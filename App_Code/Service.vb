@@ -33,8 +33,6 @@ Public Class Service
     Public Function GetDistanciaTiempo(ByVal latMov As String, ByVal lngMov As String, _
                                  ByVal latDst As String, ByVal lngDst As String) As String
 
-
-
         GetDistanciaTiempo = Nothing
         Dim tiempo As String = ""
         Dim distancia As String = ""
@@ -55,11 +53,9 @@ Public Class Service
 
                 status = m_node.ChildNodes.Item(0).InnerText
 
-
             Next
 
             If status = "OK" Then
-
 
                 m_nodelist = m_xmld.SelectNodes("/DistanceMatrixResponse/row/element/duration/text")
 
@@ -118,9 +114,6 @@ Public Class Service
             Next
 
             If status = "OK" Then
-
-
-
 
                 m_nodelist = m_xmld.SelectNodes("/GeocodeResponse/result/formatted_address")
 
@@ -260,155 +253,6 @@ Public Class Service
 
         Return result
     End Function
-
-    '<WebMethod()> _
-    'Public Function getSerialSetLog(ByVal serialNumber As String) As String
-    '    Dim result As String = "0"
-    '    Dim LicenciaId As Integer = 0
-    '    Dim ClienteIp As String = Context.Request.ServerVariables("remote_addr")
-    '    Dim connectionString As String
-    '    Dim SQL As String = ""
-    '    Dim cnnDataSource As String
-    '    Dim cnnCatalog As String
-    '    Dim cnnUser As String
-    '    Dim cnnPassword As String
-    '    serialNumber = serialNumber.Replace("/", "")
-    '    connectionString = "DSN=mysql_local;UID=root;Pwd=bac35714"
-
-    '    Try
-
-    '        Dim cnn As OdbcConnection
-    '        cnn = New OdbcConnection(connectionString)
-    '        cnn.Open()
-    '        Dim Reader As OdbcDataReader
-    '        SQL = "SELECT id,serial FROM licencias WHERE Serial = '" & serialNumber & "'"
-    '        Dim Cmd As New OdbcCommand(SQL, cnn)
-    '        Reader = Cmd.ExecuteReader()
-    '        If (Reader.Read()) Then
-
-    '            LicenciaId = Reader("ID")
-
-    '            SQL = "SELECT id,cnn_data_source,cnn_catalog,cnn_user,cnn_pass FROM clientes_licencias WHERE licencia_id = " & LicenciaId
-    '            Dim CmdConnection As New OdbcCommand(SQL, cnn)
-    '            Reader = CmdConnection.ExecuteReader
-    '            If (Reader.Read()) Then
-
-    '                Dim CliLicId As Integer = Reader("id")
-    '                cnnCatalog = Reader("cnn_catalog")
-    '                cnnDataSource = Reader("cnn_data_source")
-    '                cnnUser = Reader("cnn_user")
-    '                cnnPassword = Reader("cnn_pass")
-    '                SQL = "SELECT clilicprod.id as ID, prod.nro_producto as NROPROD FROM clientes_licencias_productos clilicprod "
-    '                SQL = SQL & "INNER JOIN productos prod ON (prod.id = clilicprod.producto_id) "
-    '                SQL = SQL & "WHERE clientes_licencia_id = " & CliLicId
-    '                Dim cmdProd As New OdbcCommand(SQL, cnn)
-    '                Reader = cmdProd.ExecuteReader
-    '                Dim vMod As New Collection
-    '                Dim vProd As New Collection
-
-    '                While (Reader.Read())
-
-    '                    Dim prod As String = Reader("NROPROD")
-    '                    vProd.Add(prod)
-    '                    Dim CliLicProdId As Integer = Reader("ID")
-    '                    SQL = "SELECT pmod.abreviatura_id as MODULOEXC FROM clientes_licencias_productos_productos_modulos cpmod "
-    '                    SQL = SQL & "INNER JOIN productos_modulos pmod ON (pmod.id = cpmod.productos_modulo_id) "
-    '                    SQL = SQL & "WHERE cpmod.clientes_licencias_producto_id = " & CliLicProdId
-    '                    Dim cmdMod As New OdbcCommand(SQL, cnn)
-    '                    Dim ReaderMod As OdbcDataReader
-    '                    ReaderMod = cmdMod.ExecuteReader
-    '                    While (ReaderMod.Read())
-    '                        Dim modulo As String = ReaderMod("MODULOEXC")
-    '                        prod = formatProd(prod)
-    '                        Dim prodMod As String = prod & modulo
-    '                        vMod.Add(prodMod)
-    '                    End While
-
-    '                End While
-
-    '                Dim prods As String = ""
-    '                For Each prod As String In vProd
-    '                    If prods = "" Then
-    '                        prods = prod
-    '                    Else
-    '                        prods = prods & "/" & prod
-    '                    End If
-    '                Next
-
-    '                prods = prods & "#"
-
-
-    '                Dim prodModulos As String = ""
-
-    '                For Each pmod As String In vMod
-    '                    If prodModulos = "" Then
-    '                        prodModulos = pmod
-    '                    Else
-    '                        prodModulos = prodModulos & "/" & pmod
-    '                    End If
-    '                Next
-
-    '                result = cnnDataSource & "^" & cnnCatalog & "^" & cnnUser & "^" & cnnPassword & "^" & prods & prodModulos
-
-    '            End If
-
-    '            'SQL = "SELECT prod.nro_producto as nProd FROM productos prod "
-    '            'SQL = SQL & "INNER JOIN licencias_productos lic ON (lic.producto_id = prod.id) "
-    '            'SQL = SQL & "WHERE lic.licencia_id = " & LicenciaId
-    '            'Dim CmdConection As New OdbcCommand(SQL, cnn)
-    '            'Reader = CmdConection.ExecuteReader()
-    '            'Dim prods As String = ""
-    '            'While (Reader.Read())
-    '            '    If (prods = "") Then
-
-    '            '        prods = Reader("nProd")
-
-    '            '    Else
-
-    '            '        prods = prods & "/" & Reader("nProd")
-
-    '            '    End If
-    '            'End While
-
-    '            'cnn.Close()
-    '            'cnn.Open()
-
-    '            'SQL = "SELECT cnn_data_source,cnn_catalog,cnn_user,cnn_pass FROM clientes_licencias "
-    '            'SQL = SQL & "WHERE licencia_id = " & LicenciaId
-    '            'CmdConection.CommandText = SQL
-    '            'CmdConection.Connection = cnn
-    '            'Reader = CmdConection.ExecuteReader()
-
-    '            'If (Reader.Read()) Then
-
-    '            '    Dim cnnDataSource As String = Reader("cnn_data_source")
-    '            '    Dim cnnCatalog As String = Reader("cnn_catalog")
-    '            '    Dim cnnUser As String = Reader("cnn_user")
-    '            '    Dim cnnPassword As String = Reader("cnn_pass")
-
-    '            '    result = cnnDataSource & "^" & cnnCatalog & "^" & cnnUser & "^" & cnnPassword & "^" & prods
-
-    '            'End If
-    '        End If
-
-    '        cnn.Close()
-    '        cnn.Open()
-    '        Dim time As DateTime = DateTime.Now
-    '        Dim format As String = "yyyy/MM/d HH:mm:ss"
-    '        Dim sTime As String = time.ToString(format)
-    '        SQL = "INSERT INTO licencias_logs (licencia_id,solicitud_id,ip,referencias,created_at,updated_at) "
-    '        SQL = SQL & "VALUES (" & LicenciaId & ",0,'" & ClienteIp & "','" & serialNumber & "','" & sTime & "','" & sTime & "')"
-    '        Dim cmdIns As New OdbcCommand(SQL, cnn)
-    '        cmdIns.ExecuteNonQuery()
-    '        cnn.Close()
-
-    '    Catch ex As Exception
-
-    '    End Try
-
-    '    Return result
-    'End Function
-
     Public Function formatProd(prod As String) As String
 
         prod = CType(prod, Integer)
@@ -445,7 +289,7 @@ Public Class Service
         Dim conexionServidor As String
         Dim fechaDeVencimiento As DateTime
         serialNumber = serialNumber.Replace("/", "")
-        connectionString = "Data Source=LOG,9898\SQLEXPRESS;Initial Catalog=Gestion;Integrated Security=SSPI;User Id = dbaadmin; Password = yeike;"
+        connectionString = "Data Source=LOG,9898\SQLEXPRESS;Initial Catalog=Gestion_Nuevo;Integrated Security=SSPI;User Id = dbaadmin; Password = yeike;"
 
         Try
 
@@ -462,14 +306,14 @@ Public Class Service
                 LicenciaId = myReader("ID")
                 myReader.Close()
 
-                myCmd.CommandText = "SELECT ID,CnnDataSource,CnnCatalog,CnnUser," & _
-                                    "CnnPassword,ISNULL(ConexionServidor,'') AS ConexionServidor,FechaDeVencimiento FROM ClientesLicencias WHERE LicenciaID = " & _
+                myCmd.CommandText = "SELECT cliLic.ID as cliLicId,CnnDataSource,CnnCatalog,CnnUser," & _
+                                    "CnnPassword,ISNULL(sit.Url,'') AS ConexionServidor,FechaDeVencimiento FROM ClientesLicencias cliLic LEFT JOIN Sitios sit ON (sit.Id = ConexionServidorId)  WHERE LicenciaID = " & _
                                     LicenciaId
 
                 myReader = myCmd.ExecuteReader()
                 If (myReader.Read()) Then
 
-                    Dim CliLicId As Integer = myReader("ID")
+                    Dim CliLicId As Integer = myReader("cliLicId")
                     cnnCatalog = myReader("CnnCatalog")
                     cnnDataSource = myReader("CnnDataSource")
                     cnnUser = myReader("CnnUser")
@@ -530,9 +374,11 @@ Public Class Service
                     Next
 
                     If (pRemote = 1) Then
+                        If (cnnDataSource.Contains("\")) Then
+                            Dim vInstance As String() = cnnDataSource.Split("\")
+                            Dim instance As String = vInstance(1)
+                        End If
 
-                        Dim vInstance As String() = cnnDataSource.Split("\")
-                        Dim instance As String = vInstance(1)
                         'cnnDataSource = conexionServidor & "\" & instance
                         cnnDataSource = conexionServidor
                     End If
@@ -549,8 +395,8 @@ Public Class Service
             Dim time As DateTime = DateTime.Now
             Dim format As String = "yyyy/MM/d HH:mm:ss"
             Dim sTime As String = time.ToString(format)
-            SQL = "INSERT INTO LicenciasLogs (LicenciaID,SolicitudID,IP,Referencias,CreatedAt) "
-            SQL = SQL & "VALUES (" & LicenciaId & ",0,'" & ClienteIp & "','" & serialNumber & "','" & sTime & "')"
+            SQL = "INSERT INTO LicenciasLogs (LicenciaId, Type, IP, Referencias, CreatedDate, UpdatedDate) "
+            SQL = SQL & "VALUES (" & LicenciaId & ",1,'" & ClienteIp & "','" & serialNumber & "','" & sTime & "','" & sTime & "')"
             myCmd.CommandText = SQL
             myCmd.ExecuteNonQuery()
             myConn.Close()
