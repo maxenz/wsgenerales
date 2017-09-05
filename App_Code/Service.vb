@@ -19,447 +19,452 @@ Imports System.Web.Configuration
 <Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()> _
 Public Class Service
 
-    Inherits System.Web.Services.WebService
+	Inherits System.Web.Services.WebService
 
-    Private myConn As SqlConnection
-    Private myConn2 As SqlConnection
-    Private myCmd As SqlCommand
-    Private myReader As SqlDataReader
-    Private myReaderMod As SqlDataReader
-    Private myCmdMod As SqlCommand
-    Private results As String
+	Private myConn As SqlConnection
+	Private myConn2 As SqlConnection
+	Private myCmd As SqlCommand
+	Private myReader As SqlDataReader
+	Private myReaderMod As SqlDataReader
+	Private myCmdMod As SqlCommand
+	Private results As String
 
-    <WebMethod()> _
-    Public Function GetDistanciaTiempo(ByVal latMov As String, ByVal lngMov As String, _
-                                 ByVal latDst As String, ByVal lngDst As String) As String
+	<WebMethod()> _
+	Public Function GetDistanciaTiempo(ByVal latMov As String, ByVal lngMov As String, _
+								 ByVal latDst As String, ByVal lngDst As String) As String
 
-        GetDistanciaTiempo = Nothing
-        Dim tiempo As String = ""
-        Dim distancia As String = ""
-        Dim url As String = "http://maps.googleapis.com/maps/api/distancematrix/xml?origins=" & latMov & "," & lngMov & "&destinations=" & latDst & "," & lngDst & "&mode=driving&language=fr-FR&sensor=false"
-        Dim status As String = ""
-        Try
-            Dim m_xmld As XmlDocument
-            Dim m_nodelist As XmlNodeList
-            Dim m_node As XmlNode
+		GetDistanciaTiempo = Nothing
+		Dim tiempo As String = ""
+		Dim distancia As String = ""
+		Dim url As String = "http://maps.googleapis.com/maps/api/distancematrix/xml?origins=" & latMov & "," & lngMov & "&destinations=" & latDst & "," & lngDst & "&mode=driving&language=fr-FR&sensor=false"
+		Dim status As String = ""
+		Try
+			Dim m_xmld As XmlDocument
+			Dim m_nodelist As XmlNodeList
+			Dim m_node As XmlNode
 
-            m_xmld = New XmlDocument()
+			m_xmld = New XmlDocument()
 
-            m_xmld.Load(url)
+			m_xmld.Load(url)
 
-            m_nodelist = m_xmld.SelectNodes("/DistanceMatrixResponse/status")
+			m_nodelist = m_xmld.SelectNodes("/DistanceMatrixResponse/status")
 
-            For Each m_node In m_nodelist
+			For Each m_node In m_nodelist
 
-                status = m_node.ChildNodes.Item(0).InnerText
+				status = m_node.ChildNodes.Item(0).InnerText
 
-            Next
+			Next
 
-            If status = "OK" Then
+			If status = "OK" Then
 
-                m_nodelist = m_xmld.SelectNodes("/DistanceMatrixResponse/row/element/duration/text")
+				m_nodelist = m_xmld.SelectNodes("/DistanceMatrixResponse/row/element/duration/text")
 
-                For Each m_node In m_nodelist
+				For Each m_node In m_nodelist
 
-                    tiempo = m_node.ChildNodes.Item(0).InnerText
+					tiempo = m_node.ChildNodes.Item(0).InnerText
 
-                Next
+				Next
 
-                m_nodelist = m_xmld.SelectNodes("/DistanceMatrixResponse/row/element/distance/text")
+				m_nodelist = m_xmld.SelectNodes("/DistanceMatrixResponse/row/element/distance/text")
 
-                For Each m_node In m_nodelist
+				For Each m_node In m_nodelist
 
-                    distancia = m_node.ChildNodes.Item(0).InnerText
+					distancia = m_node.ChildNodes.Item(0).InnerText
 
-                Next
+				Next
 
-                GetDistanciaTiempo = distancia & "/" & tiempo
+				GetDistanciaTiempo = distancia & "/" & tiempo
 
-            Else
+			Else
 
-                GetDistanciaTiempo = "0/0"
-            End If
+				GetDistanciaTiempo = "0/0"
+			End If
 
-        Catch errorVariable As Exception
+		Catch errorVariable As Exception
 
-            Console.Write(errorVariable.ToString())
+			Console.Write(errorVariable.ToString())
 
-        End Try
+		End Try
 
-    End Function
+	End Function
 
-    <WebMethod()> _
-    Public Function GetDireccion(ByVal lat As String, ByVal lng As String) As String
+	<WebMethod()> _
+	Public Function GetDireccion(ByVal lat As String, ByVal lng As String) As String
 
-        GetDireccion = Nothing
-        Dim strResultados As String = ""
-        Dim url As String = "http://maps.googleapis.com/maps/api/geocode/xml?address=" & lat & "," & lng & "&sensor=false"
-        Dim status As String = ""
-        Try
-            Dim m_xmld As XmlDocument
-            Dim m_nodelist As XmlNodeList
-            Dim m_node As XmlNode
+		GetDireccion = Nothing
+		Dim strResultados As String = ""
+		Dim url As String = "http://maps.googleapis.com/maps/api/geocode/xml?address=" & lat & "," & lng & "&sensor=false"
+		Dim status As String = ""
+		Try
+			Dim m_xmld As XmlDocument
+			Dim m_nodelist As XmlNodeList
+			Dim m_node As XmlNode
 
-            m_xmld = New XmlDocument()
+			m_xmld = New XmlDocument()
 
-            m_xmld.Load(url)
+			m_xmld.Load(url)
 
-            m_nodelist = m_xmld.SelectNodes("/GeocodeResponse/status")
+			m_nodelist = m_xmld.SelectNodes("/GeocodeResponse/status")
 
-            For Each m_node In m_nodelist
+			For Each m_node In m_nodelist
 
-                status = m_node.ChildNodes.Item(0).InnerText
-                MsgBox(status)
+				status = m_node.ChildNodes.Item(0).InnerText
+				MsgBox(status)
 
-            Next
+			Next
 
-            If status = "OK" Then
+			If status = "OK" Then
 
-                m_nodelist = m_xmld.SelectNodes("/GeocodeResponse/result/formatted_address")
+				m_nodelist = m_xmld.SelectNodes("/GeocodeResponse/result/formatted_address")
 
-                For Each m_node In m_nodelist
+				For Each m_node In m_nodelist
 
-                    Dim dire = m_node.ChildNodes.Item(0).InnerText
+					Dim dire = m_node.ChildNodes.Item(0).InnerText
 
-                    GetDireccion = dire
+					GetDireccion = dire
 
-                Next
+				Next
 
-            Else
-                GetDireccion = "0"
+			Else
+				GetDireccion = "0"
 
-            End If
-        Catch errorVariable As Exception
+			End If
+		Catch errorVariable As Exception
 
-            Console.Write(errorVariable.ToString())
+			Console.Write(errorVariable.ToString())
 
-        End Try
+		End Try
 
 
-    End Function
+	End Function
 
-    <WebMethod()> _
-    Public Function GetLatLong(ByVal direccion As String) As String
+	<WebMethod()> _
+	Public Function GetLatLong(ByVal direccion As String) As String
 
-        GetLatLong = Nothing
-        Dim strResultados As String = ""
-        Dim url As String = "http://maps.googleapis.com/maps/api/geocode/xml?address=" & direccion & "&sensor=false"
-        Dim reader As XmlTextReader = New XmlTextReader(url)
-        Dim status As String = ""
+		GetLatLong = Nothing
+		Dim strResultados As String = ""
+		Dim url As String = "http://maps.googleapis.com/maps/api/geocode/xml?address=" & direccion & "&sensor=false"
+		Dim reader As XmlTextReader = New XmlTextReader(url)
+		Dim status As String = ""
 
-        Try
-            Dim m_xmld As XmlDocument
-            Dim m_nodelist As XmlNodeList
-            Dim m_node As XmlNode
+		Try
+			Dim m_xmld As XmlDocument
+			Dim m_nodelist As XmlNodeList
+			Dim m_node As XmlNode
 
-            m_xmld = New XmlDocument()
+			m_xmld = New XmlDocument()
 
-            m_xmld.Load(url)
+			m_xmld.Load(url)
 
-            m_nodelist = m_xmld.SelectNodes("/GeocodeResponse/status")
+			m_nodelist = m_xmld.SelectNodes("/GeocodeResponse/status")
 
-            For Each m_node In m_nodelist
+			For Each m_node In m_nodelist
 
-                status = m_node.ChildNodes.Item(0).InnerText
+				status = m_node.ChildNodes.Item(0).InnerText
 
-            Next
+			Next
 
-            If status = "OK" Then
+			If status = "OK" Then
 
-                m_nodelist = m_xmld.SelectNodes("/GeocodeResponse/result/geometry/location")
+				m_nodelist = m_xmld.SelectNodes("/GeocodeResponse/result/geometry/location")
 
-                For Each m_node In m_nodelist
+				For Each m_node In m_nodelist
 
-                    Dim lat = m_node.ChildNodes.Item(0).InnerText
+					Dim lat = m_node.ChildNodes.Item(0).InnerText
 
-                    Dim lng = m_node.ChildNodes.Item(1).InnerText
+					Dim lng = m_node.ChildNodes.Item(1).InnerText
 
-                    GetLatLong = lat & "/" & lng
+					GetLatLong = lat & "/" & lng
 
-                Next
+				Next
 
-            Else
-                GetLatLong = "0/0"
+			Else
+				GetLatLong = "0/0"
 
-            End If
+			End If
 
-        Catch errorVariable As Exception
+		Catch errorVariable As Exception
 
-            Console.Write(errorVariable.ToString())
+			Console.Write(errorVariable.ToString())
 
-        End Try
+		End Try
 
-    End Function
+	End Function
 
-    <WebMethod()> _
-    Public Function GetPuntosEnPoligono(ByVal pLat As Single, ByVal pLon As Single, ByVal pTip As String) As String
-        GetPuntosEnPoligono = ""
+	<WebMethod()> _
+	Public Function GetPuntosEnPoligono(ByVal pLat As Single, ByVal pLon As Single, ByVal pTip As String) As String
+		GetPuntosEnPoligono = ""
 
-        Try
-            Dim shmSession As New PanelC.Conexion
-            Dim objZonas As New CompuMapC.Zonificaciones
+		Try
+			Dim shmSession As New PanelC.Conexion
+			Dim objZonas As New CompuMapC.Zonificaciones
 
-            If shmSession.Iniciar("192.168.0.249", 1972, "SHAMAN", "EMERGENCIAS", "JOB", 1, True) Then
+			If shmSession.Iniciar("192.168.0.249", 1972, "SHAMAN", "EMERGENCIAS", "JOB", 1, True) Then
 
 
-                Dim vDev As String = objZonas.GetPoligonosInPoint(pLat, pLon, pTip, True)
+				Dim vDev As String = objZonas.GetPoligonosInPoint(pLat, pLon, pTip, True)
 
-                GetPuntosEnPoligono = vDev
+				GetPuntosEnPoligono = vDev
 
-                shmSession.Cerrar(shmSession.PID, True)
+				shmSession.Cerrar(shmSession.PID, True)
 
-            Else
+			Else
 
-                GetPuntosEnPoligono = "Sin conexión"
+				GetPuntosEnPoligono = "Sin conexión"
 
-            End If
+			End If
 
-        Catch ex As Exception
+		Catch ex As Exception
 
-            GetPuntosEnPoligono = ex.Message
+			GetPuntosEnPoligono = ex.Message
 
-        End Try
+		End Try
 
-    End Function
+	End Function
 
-    <WebMethod()> _
-    Public Function getIncidente(ByVal cod As String, ByVal fec As String) As String
-        Dim result As String = ""
-        Dim connectionString As String
-        Dim cnn As OdbcConnection
-        connectionString = "DSN=phpODBC;UID=_SYSTEM;Pwd=sys"
-        cnn = New OdbcConnection(connectionString)
-        Try
-            cnn.Open()
-            Dim Reader As OdbcDataReader
-            Dim cmdString = "SELECT TOP 1 inc.HorInicial, inc.HorFinal,inc.sintoma," & _
-            "incdom.Domicilio FROM Emergency.Incidentes inc INNER JOIN " & _
-            " Emergency.IncidentesDomicilios incdom ON (inc.ID = incdom.IncidenteId)" & _
-            " WHERE inc.FecIncidente = '" & fec & "' AND inc.NroIncidente = '" & cod & "'"
-            Dim Cmd As New OdbcCommand(cmdString, cnn)
-            Reader = Cmd.ExecuteReader()
-            If (Reader.Read()) Then
-                Dim dom As String = Reader("Domicilio")
-                Dim sint As String = Reader("Sintoma")
-                Dim horInicio As String = Reader("HorInicial")
-                Dim horFinal As String = Reader("HorFinal")
-                result = dom & "$" & sint & "$" & horInicio & "$" & horFinal
-            End If
-            cnn.Close()
-        Catch ex As Exception
+	<WebMethod()> _
+	Public Function getIncidente(ByVal cod As String, ByVal fec As String) As String
+		Dim result As String = ""
+		Dim connectionString As String
+		Dim cnn As OdbcConnection
+		connectionString = "DSN=phpODBC;UID=_SYSTEM;Pwd=sys"
+		cnn = New OdbcConnection(connectionString)
+		Try
+			cnn.Open()
+			Dim Reader As OdbcDataReader
+			Dim cmdString = "SELECT TOP 1 inc.HorInicial, inc.HorFinal,inc.sintoma," & _
+			"incdom.Domicilio FROM Emergency.Incidentes inc INNER JOIN " & _
+			" Emergency.IncidentesDomicilios incdom ON (inc.ID = incdom.IncidenteId)" & _
+			" WHERE inc.FecIncidente = '" & fec & "' AND inc.NroIncidente = '" & cod & "'"
+			Dim Cmd As New OdbcCommand(cmdString, cnn)
+			Reader = Cmd.ExecuteReader()
+			If (Reader.Read()) Then
+				Dim dom As String = Reader("Domicilio")
+				Dim sint As String = Reader("Sintoma")
+				Dim horInicio As String = Reader("HorInicial")
+				Dim horFinal As String = Reader("HorFinal")
+				result = dom & "$" & sint & "$" & horInicio & "$" & horFinal
+			End If
+			cnn.Close()
+		Catch ex As Exception
 
-            result = "Error"
-        End Try
+			result = "Error"
+		End Try
 
-        Return result
-    End Function
-    Public Function formatProd(prod As String) As String
+		Return result
+	End Function
+	Public Function formatProd(prod As String) As String
 
-        prod = CType(prod, Integer)
-        If prod < 10 Then
-            prod = CType(prod, String)
-            Return "00" & prod
-        ElseIf prod < 100 Then
-            prod = CType(prod, String)
-            Return "0" & prod
-        Else
-            prod = CType(prod, String)
-            Return prod
-        End If
+		prod = CType(prod, Integer)
+		If prod < 10 Then
+			prod = CType(prod, String)
+			Return "00" & prod
+		ElseIf prod < 100 Then
+			prod = CType(prod, String)
+			Return "0" & prod
+		Else
+			prod = CType(prod, String)
+			Return prod
+		End If
+	End Function
 
-    End Function
+	'-------------> PRUEBA DE WEBSERVICE CONTRA SQL SERVER
+	<WebMethod()> _
+	Public Function getSerialSetLog(ByVal serialNumber As String) As String
+		Return getSerialSetLogLast(serialNumber, 0)
+	End Function
 
-    '-------------> PRUEBA DE WEBSERVICE CONTRA SQL SERVER
+	<WebMethod()> _
+	Public Function getSerialSetLogLast(ByVal serialNumber As String, ByVal pRemote As Integer) As String
+		Dim result As String = "0"
+		Dim LicenciaId As Integer = 0
+		Dim ClienteIp As String = Context.Request.ServerVariables("remote_addr")
+		Dim connectionString As String
+		Dim SQL As String = ""
+		Dim cnnDataSource As String
+		Dim cnnCatalog As String
+		Dim cnnUser As String
+		Dim cnnPassword As String
+		Dim conexionServidor As String
+		Dim fechaDeVencimiento As DateTime
+		serialNumber = serialNumber.Replace("/", "")
+		connectionString = "Data Source=LOG,9898\SQLEXPRESS;Initial Catalog=Gestion_Nuevo;Integrated Security=SSPI;User Id = dbaadmin; Password = yeike;"
 
-    <WebMethod()> _
-    Public Function getSerialSetLog(ByVal serialNumber As String) As String
-        Return getSerialSetLogLast(serialNumber, 0)
-    End Function
-    <WebMethod()> _
-    Public Function getSerialSetLogLast(ByVal serialNumber As String, ByVal pRemote As Integer) As String
-        Dim result As String = "0"
-        Dim LicenciaId As Integer = 0
-        Dim ClienteIp As String = Context.Request.ServerVariables("remote_addr")
-        Dim connectionString As String
-        Dim SQL As String = ""
-        Dim cnnDataSource As String
-        Dim cnnCatalog As String
-        Dim cnnUser As String
-        Dim cnnPassword As String
-        Dim conexionServidor As String
-        Dim fechaDeVencimiento As DateTime
-        serialNumber = serialNumber.Replace("/", "")
-        connectionString = "Data Source=LOG,9898\SQLEXPRESS;Initial Catalog=Gestion_Nuevo;Integrated Security=SSPI;User Id = dbaadmin; Password = yeike;"
+		Try
 
-        Try
+			myConn = New SqlConnection(connectionString)
+			myConn2 = New SqlConnection(connectionString)
+			myCmd = myConn.CreateCommand
+			myCmd.CommandText = "SELECT id,serial FROM licencias WHERE Serial = '" & serialNumber & "'"
+			myConn.Open()
+			myConn2.Open()
+			myReader = myCmd.ExecuteReader()
 
-            myConn = New SqlConnection(connectionString)
-            myConn2 = New SqlConnection(connectionString)
-            myCmd = myConn.CreateCommand
-            myCmd.CommandText = "SELECT id,serial FROM licencias WHERE Serial = '" & serialNumber & "'"
-            myConn.Open()
-            myConn2.Open()
-            myReader = myCmd.ExecuteReader()
+			If myReader.Read() Then
 
-            If myReader.Read() Then
+				LicenciaId = myReader("ID")
+				myReader.Close()
 
-                LicenciaId = myReader("ID")
-                myReader.Close()
+				myCmd.CommandText = "SELECT cliLic.ID as cliLicId,CnnDataSource,CnnCatalog,CnnUser," & _
+									"CnnPassword,ISNULL(sit.Url,'') AS ConexionServidor,FechaDeVencimiento FROM ClientesLicencias cliLic LEFT JOIN Sitios sit ON (sit.Id = ConexionServidorId)  WHERE LicenciaID = " & _
+									LicenciaId
 
-                myCmd.CommandText = "SELECT cliLic.ID as cliLicId,CnnDataSource,CnnCatalog,CnnUser," & _
-                                    "CnnPassword,ISNULL(sit.Url,'') AS ConexionServidor,FechaDeVencimiento FROM ClientesLicencias cliLic LEFT JOIN Sitios sit ON (sit.Id = ConexionServidorId)  WHERE LicenciaID = " & _
-                                    LicenciaId
+				myReader = myCmd.ExecuteReader()
+				If (myReader.Read()) Then
 
-                myReader = myCmd.ExecuteReader()
-                If (myReader.Read()) Then
+					Dim CliLicId As Integer = myReader("cliLicId")
+					cnnCatalog = myReader("CnnCatalog")
+					cnnDataSource = myReader("CnnDataSource")
+					cnnUser = myReader("CnnUser")
+					cnnPassword = myReader("CnnPassword")
+					conexionServidor = myReader("ConexionServidor")
+					fechaDeVencimiento = myReader("FechaDeVencimiento")
+					If (Date.Today > fechaDeVencimiento) Then
+						Return 0
+					End If
+					SQL = "SELECT clilicprod.ID as ID, prod.Numero as NROPROD, prod.Id as ProdId FROM ClientesLicenciasProductos clilicprod "
+					SQL = SQL & "INNER JOIN Productos prod ON (prod.id = clilicprod.ProductoID) "
+					SQL = SQL & "WHERE ClientesLicenciaID = " & CliLicId
+					myCmd.CommandText = SQL
+					myReader.Close()
+					myReader = myCmd.ExecuteReader()
+					Dim vMod As New Collection
+					Dim vProd As New Collection
 
-                    Dim CliLicId As Integer = myReader("cliLicId")
-                    cnnCatalog = myReader("CnnCatalog")
-                    cnnDataSource = myReader("CnnDataSource")
-                    cnnUser = myReader("CnnUser")
-                    cnnPassword = myReader("CnnPassword")
-                    conexionServidor = myReader("ConexionServidor")
-                    fechaDeVencimiento = myReader("FechaDeVencimiento")
-                    If (Date.Today > fechaDeVencimiento) Then
-                        Return 0
-                    End If
-                    SQL = "SELECT clilicprod.ID as ID, prod.Numero as NROPROD FROM ClientesLicenciasProductos clilicprod "
-                    SQL = SQL & "INNER JOIN Productos prod ON (prod.id = clilicprod.ProductoID) "
-                    SQL = SQL & "WHERE ClientesLicenciaID = " & CliLicId
-                    myCmd.CommandText = SQL
-                    myReader.Close()
-                    myReader = myCmd.ExecuteReader()
-                    Dim vMod As New Collection
-                    Dim vProd As New Collection
+					While (myReader.Read())
 
-                    While (myReader.Read())
+						Dim prod As String = myReader("NROPROD")
+						Dim prodId As Integer = myReader("ProdId")
+						vProd.Add(prod)
+						Dim CliLicProdId As Integer = myReader("ID")
 
-                        Dim prod As String = myReader("NROPROD")
-                        vProd.Add(prod)
-                        Dim CliLicProdId As Integer = myReader("ID")
-                        SQL = "SELECT pmod.codigo as MODULOEXC FROM ClientesLicenciasProductosModulos cpmod "
-                        SQL = SQL & "INNER JOIN ProductosModulos pmod ON (pmod.id = cpmod.ProductosModuloID) "
-                        SQL = SQL & "WHERE cpmod.ClientesLicenciasProductoID = " & CliLicProdId
-                        myCmdMod = myConn2.CreateCommand
-                        myCmdMod.CommandText = SQL
-                        myReaderMod = myCmdMod.ExecuteReader
-                        While (myReaderMod.Read())
-                            Dim modulo As String = myReaderMod("MODULOEXC")
-                            prod = formatProd(prod)
-                            Dim prodMod As String = prod & modulo
-                            vMod.Add(prodMod)
-                        End While
-                        myReaderMod.Close()
-                    End While
+						SQL = "SELECT pm.codigo AS MODULOEXC FROM ProductosModulos pm "
+						SQL = SQL & "WHERE pm.ID NOT IN "
+						SQL = SQL & "(SELECT pmod.ID FROM ClientesLicenciasProductosModulos cpmod "
+						SQL = SQL & "INNER JOIN ProductosModulos pmod ON (pmod.ID = cpmod.ProductosModuloID) "
+						SQL = SQL & String.Format("WHERE cpmod.ClientesLicenciasProductoID = {0} ", CliLicProdId)
+						SQL = SQL & String.Format(") AND pm.ProductoId = {0}", prodId)
 
-                    Dim prods As String = ""
-                    For Each prod As String In vProd
-                        If prods = "" Then
-                            prods = prod
-                        Else
-                            prods = prods & "/" & prod
-                        End If
-                    Next
+						myCmdMod = myConn2.CreateCommand
+						myCmdMod.CommandText = SQL
+						myReaderMod = myCmdMod.ExecuteReader
+						While (myReaderMod.Read())
+							Dim modulo As String = myReaderMod("MODULOEXC")
+							prod = formatProd(prod)
+							Dim prodMod As String = prod & modulo
+							vMod.Add(prodMod)
+						End While
+						myReaderMod.Close()
+					End While
 
-                    prods = prods & "#"
+					Dim prods As String = ""
+					For Each prod As String In vProd
+						If prods = "" Then
+							prods = prod
+						Else
+							prods = prods & "/" & prod
+						End If
+					Next
 
-                    Dim prodModulos As String = ""
+					prods = prods & "#"
 
-                    For Each pmod As String In vMod
-                        If prodModulos = "" Then
-                            prodModulos = pmod
-                        Else
-                            prodModulos = prodModulos & "/" & pmod
-                        End If
-                    Next
+					Dim prodModulos As String = ""
 
-                    If (pRemote = 1) Then
-                        If (cnnDataSource.Contains("\")) Then
-                            Dim vInstance As String() = cnnDataSource.Split("\")
-                            Dim instance As String = vInstance(1)
-                        End If
+					For Each pmod As String In vMod
+						If prodModulos = "" Then
+							prodModulos = pmod
+						Else
+							prodModulos = prodModulos & "/" & pmod
+						End If
+					Next
 
-                        'cnnDataSource = conexionServidor & "\" & instance
-                        cnnDataSource = conexionServidor
-                    End If
+					If (pRemote = 1) Then
+						If (cnnDataSource.Contains("\")) Then
+							Dim vInstance As String() = cnnDataSource.Split("\")
+							Dim instance As String = vInstance(1)
+						End If
 
-                    result = cnnDataSource & "^" & cnnCatalog & "^" & cnnUser & "^" & cnnPassword & "^" & prods & prodModulos & "^" & fechaDeVencimiento
+						'cnnDataSource = conexionServidor & "\" & instance
+						cnnDataSource = conexionServidor
+					End If
 
-                End If
+					result = cnnDataSource & "^" & cnnCatalog & "^" & cnnUser & "^" & cnnPassword & "^" & prods & prodModulos & "^" & fechaDeVencimiento
 
-            End If
+				End If
 
-            myConn.Close()
-            myConn.Open()
+			End If
 
-            Dim time As DateTime = DateTime.Now
-            Dim format As String = "yyyy/MM/d HH:mm:ss"
-            Dim sTime As String = time.ToString(format)
-            SQL = "INSERT INTO LicenciasLogs (LicenciaId, Type, IP, Referencias, CreatedDate, UpdatedDate) "
-            SQL = SQL & "VALUES (" & LicenciaId & ",1,'" & ClienteIp & "','" & serialNumber & "','" & sTime & "','" & sTime & "')"
-            myCmd.CommandText = SQL
-            myCmd.ExecuteNonQuery()
-            myConn.Close()
+			myConn.Close()
+			myConn.Open()
 
-        Catch ex As Exception
+			Dim time As DateTime = DateTime.Now
+			Dim format As String = "yyyy/MM/d HH:mm:ss"
+			Dim sTime As String = time.ToString(format)
+			SQL = "INSERT INTO LicenciasLogs (LicenciaId, Type, IP, Referencias, CreatedDate, UpdatedDate) "
+			SQL = SQL & "VALUES (" & LicenciaId & ",1,'" & ClienteIp & "','" & serialNumber & "','" & sTime & "','" & sTime & "')"
+			myCmd.CommandText = SQL
+			myCmd.ExecuteNonQuery()
+			myConn.Close()
 
-            Return ex.Message.ToString
+		Catch ex As Exception
 
-        End Try
+			Return ex.Message.ToString
 
-        Return result
+		End Try
 
-    End Function
+		Return result
 
-    <WebMethod()> _
-    Public Function isInGestion(ByVal user As String, ByVal pass As String, ByVal llave As String) As String
-        Dim client = New RestClient()
-        client.BaseUrl = "http://localhost:57771/"
+	End Function
 
-        Dim request = New RestRequest()
-        request.Resource = "ExternalLogin/IsInGestion"
-        request.AddParameter("user", user)
-        request.AddParameter("pass", pass)
-        request.AddParameter("llave", llave)
+	<WebMethod()> _
+	Public Function isInGestion(ByVal user As String, ByVal pass As String, ByVal llave As String) As String
+		Dim client = New RestClient()
+		client.BaseUrl = "http://localhost:57771/"
 
-        Dim response As IRestResponse = client.Execute(request)
+		Dim request = New RestRequest()
+		request.Resource = "ExternalLogin/IsInGestion"
+		request.AddParameter("user", user)
+		request.AddParameter("pass", pass)
+		request.AddParameter("llave", llave)
 
-        Return response.Content
+		Dim response As IRestResponse = client.Execute(request)
 
-    End Function
+		Return response.Content
 
-    <WebMethod()> _
-    Public Function setPushNotification(license As String, mobile As String, message As String) As Boolean
+	End Function
 
-        Dim oneSignalUrl As String = WebConfigurationManager.AppSettings.Get("oneSignalUrl")
+	<WebMethod()> _
+	Public Function setPushNotification(license As String, mobile As String, message As String) As Boolean
 
-        Dim request = TryCast(WebRequest.Create(oneSignalUrl), HttpWebRequest)
+		Dim oneSignalUrl As String = WebConfigurationManager.AppSettings.Get("oneSignalUrl")
 
-        request.KeepAlive = True
-        request.Method = "POST"
-        request.ContentType = "application/json"
+		Dim request = TryCast(WebRequest.Create(oneSignalUrl), HttpWebRequest)
 
-        request.Headers.Add("authorization", "Basic ZjljMmY0OTMtMTk4Zi00NWE4LWI2ODItMDllMWNmMjUxNWU5")
+		request.KeepAlive = True
+		request.Method = "POST"
+		request.ContentType = "application/json"
 
-        Dim byteArray As Byte() = Encoding.UTF8.GetBytes((Convert.ToString((Convert.ToString((Convert.ToString("{" + """app_id"": ""e090d46b-2aa9-403c-8365-401dfffb77fc""," + """contents"": {""en"": """) & message) + """, ""es"": """) & message) + """}," + """tags"" : [{ ""key"": ""mobile"", ""relation"": ""="", ""value"": """ + mobile + """}," + "{""operator"": ""AND""}," + "{""key"": ""license"", ""relation"": ""="", ""value"": """) & license) + """}" + "]}")
+		request.Headers.Add("authorization", "Basic ZjljMmY0OTMtMTk4Zi00NWE4LWI2ODItMDllMWNmMjUxNWU5")
 
-        Dim responseContent As String = Nothing
+		Dim byteArray As Byte() = Encoding.UTF8.GetBytes((Convert.ToString((Convert.ToString((Convert.ToString("{" + """app_id"": ""e090d46b-2aa9-403c-8365-401dfffb77fc""," + """contents"": {""en"": """) & message) + """, ""es"": """) & message) + """}," + """tags"" : [{ ""key"": ""mobile"", ""relation"": ""="", ""value"": """ + mobile + """}," + "{""operator"": ""AND""}," + "{""key"": ""license"", ""relation"": ""="", ""value"": """) & license) + """}" + "]}")
 
-        Try
-            Using writer = request.GetRequestStream()
-                writer.Write(byteArray, 0, byteArray.Length)
-            End Using
+		Dim responseContent As String = Nothing
 
-            Using response = TryCast(request.GetResponse(), HttpWebResponse)
-                Using reader = New StreamReader(response.GetResponseStream())
-                    responseContent = reader.ReadToEnd()
-                End Using
-            End Using
-            Return True
-        Catch ex As WebException
-            Return False
-        End Try
+		Try
+			Using writer = request.GetRequestStream()
+				writer.Write(byteArray, 0, byteArray.Length)
+			End Using
 
-    End Function
+			Using response = TryCast(request.GetResponse(), HttpWebResponse)
+				Using reader = New StreamReader(response.GetResponseStream())
+					responseContent = reader.ReadToEnd()
+				End Using
+			End Using
+			Return True
+		Catch ex As WebException
+			Return False
+		End Try
+
+	End Function
 
 End Class
